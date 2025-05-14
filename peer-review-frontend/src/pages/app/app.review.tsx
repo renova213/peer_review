@@ -7,8 +7,7 @@ import ReviewsList from "../../components/review.list";
 
 export default function AppReview() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { reviews, reviewLoading, reviewError, fetchReviews, addReview } =
-    useReviewStore();
+  const { reviews, reviewError, fetchReviews, addReview } = useReviewStore();
   const myUserId = "e5f6a7b8-c9d0-1234-5678-90abcdef4321";
 
   useEffect(() => {
@@ -54,7 +53,6 @@ export default function AppReview() {
           <ReviewsList
             pageId={""}
             reviews={reviews}
-            loading={reviewLoading}
             error={reviewError}
             type={"APP"}
           />

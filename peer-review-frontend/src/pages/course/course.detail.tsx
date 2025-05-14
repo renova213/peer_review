@@ -9,8 +9,7 @@ import { toast } from "react-toastify";
 
 export default function CourseDetail() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { reviews, reviewLoading, reviewError, fetchReviews, addReview } =
-    useReviewStore();
+  const { reviews, reviewError, fetchReviews, addReview } = useReviewStore();
   const { courseId } = useParams<{ courseId: string }>();
   const myUserId = "e5f6a7b8-c9d0-1234-5678-90abcdef4321";
 
@@ -63,7 +62,6 @@ export default function CourseDetail() {
           <ReviewsList
             pageId={courseId ?? ""}
             reviews={reviews}
-            loading={reviewLoading}
             error={reviewError}
             type="COURSE"
           />

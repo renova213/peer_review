@@ -21,15 +21,24 @@ export default function Review(props: Readonly<ReviewProps>) {
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [reviewData, setReviewData] = useState<ReviewInterface>(props.review);
-  const [totalUpVote, setTotalUpVote] = useState<number>(props.upVote);
-  const [totalDownVote, setTotalDownVote] = useState<number>(props.downVote);
-  const [userVoteType, setUserVoteType] = useState<string>(props.userVoteType);
 
-  const { addVoteReview, fetchReview, addReview, updateReview } =
+  const { addVoteReview, addReview, fetchReviews, updateReview } =
     useReviewStore();
 
   const myUserId = "e5f6a7b8-c9d0-1234-5678-90abcdef4321";
+
+  const fetchAllReviews = async () => {
+    let pageType = props.type;
+    if (props.type === "COURSE") {
+      pageType = "courses";
+    } else if (props.type === "TRYOUT_SECTION") {
+      pageType = "tryout-sections";
+    } else if (props.type === "APP") {
+      pageType = "apps";
+    }
+
+    await fetchReviews(props.pageId, `review/nested/${pageType}`);
+  };
 
   const handleSubmitReply = async (
     content: string,
@@ -40,7 +49,7 @@ export default function Review(props: Readonly<ReviewProps>) {
     try {
       await addReview(myUserId, {
         type: props.type,
-        referenceId: reviewData.id,
+        referenceId: props.review.id,
         [props.type === "COURSE"
           ? "courseId"
           : props.type === "TRYOUT_SECTION"
@@ -49,9 +58,7 @@ export default function Review(props: Readonly<ReviewProps>) {
         content,
         image,
       });
-
-      const updatedReview = await fetchReview(props.review.id);
-      setReviewData(updatedReview);
+      await fetchAllReviews();
     } catch {
       toast.error("Failed to submit review");
     } finally {
@@ -67,14 +74,12 @@ export default function Review(props: Readonly<ReviewProps>) {
   ) => {
     setIsSubmitting(true);
     try {
-      await updateReview(reviewData.id, {
+      await updateReview(props.review.id, {
         content,
         ...(props.depth === 0 ? { rating } : {}),
         ...(image ? { image } : {}),
       });
-
-      const updatedReview = await fetchReview(props.review.id);
-      setReviewData(updatedReview);
+      await fetchAllReviews();
     } catch {
       toast.error("Failed to submit review");
     } finally {
@@ -87,38 +92,10 @@ export default function Review(props: Readonly<ReviewProps>) {
     try {
       await addVoteReview({
         userId: myUserId,
-        reviewId: reviewData?.id ?? "",
+        reviewId: props.review.id ?? "",
         type: voteType,
       });
-
-      const updated = await fetchReview(reviewData?.id ?? "");
-
-      if (
-        updated.reviewVotes !== null &&
-        updated.reviewVotes !== undefined &&
-        updated.reviewVotes.length > 0
-      ) {
-        const userVote = updated.reviewVotes?.find(
-          (v) => v.userId === myUserId
-        );
-        const upvote =
-          updated.reviewVotes?.filter(
-            (v) => v.type === "upvote" && v.reviewId === updated.id
-          )?.length ?? 0;
-
-        const downvote =
-          updated.reviewVotes?.filter(
-            (v) => v.type === "downvote" && v.reviewId === updated.id
-          )?.length ?? 0;
-
-        setTotalDownVote(downvote);
-        setTotalUpVote(upvote);
-        setUserVoteType(userVote?.type ?? "");
-      } else {
-        setTotalDownVote(0);
-        setTotalUpVote(0);
-        setUserVoteType("");
-      }
+      await fetchAllReviews();
     } catch {
       toast.error("Failed to vote:");
     }
@@ -148,54 +125,62 @@ export default function Review(props: Readonly<ReviewProps>) {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-400">
-                {reviewData?.user?.fullname}
+                {props.review.user?.fullname}
               </span>
               <span className="text-sm text-gray-500">
-                {new Date(reviewData?.createdAt).toLocaleDateString()}
+                {new Date(props.review.createdAt).toLocaleDateString()}
               </span>
             </div>
-            {props.depth === 0 && renderStars(reviewData?.rating)}
+            {props.depth === 0 && renderStars(props.review.rating)}
           </div>
 
-          {reviewData?.image && (
+          {props.review.image && (
             <div className="mb-4">
               <img
-                src={reviewData?.image ?? ""}
+                src={props.review.image ?? ""}
                 alt="Review attachment"
                 className="rounded-lg max-h-[300px] max-w-[300px]"
               />
             </div>
           )}
 
-          <p className="text-gray-300 mb-4">{reviewData?.content}</p>
+          <p className="text-gray-300 mb-4">{props.review.content}</p>
 
           <div className="flex items-center space-x-4 mb-2">
             <button
               onClick={() => handleVote("upvote")}
               className={clsx(
                 "flex items-center space-x-1 hover:text-blue-300",
-                userVoteType === "upvote" ? "text-blue-400" : "text-gray-400"
+                props.userVoteType === "upvote"
+                  ? "text-blue-400"
+                  : "text-gray-400"
               )}
             >
               <ThumbsUp
                 size={20}
-                className={userVoteType === "upvote" ? "fill-blue-400" : ""}
+                className={
+                  props.userVoteType === "upvote" ? "fill-blue-400" : ""
+                }
               />
-              <span className="text-sm font-medium">{totalUpVote}</span>
+              <span className="text-sm font-medium">{props.upVote}</span>
             </button>
 
             <button
               onClick={() => handleVote("downvote")}
               className={clsx(
                 "flex items-center space-x-1 hover:text-red-300",
-                userVoteType === "downvote" ? "text-red-400" : "text-gray-400"
+                props.userVoteType === "downvote"
+                  ? "text-red-400"
+                  : "text-gray-400"
               )}
             >
               <ThumbsDown
                 size={20}
-                className={userVoteType === "downvote" ? "fill-red-400" : ""}
+                className={
+                  props.userVoteType === "downvote" ? "fill-red-400" : ""
+                }
               />
-              <span className="text-sm font-medium">{totalDownVote}</span>
+              <span className="text-sm font-medium">{props.downVote}</span>
             </button>
 
             <button
@@ -213,7 +198,7 @@ export default function Review(props: Readonly<ReviewProps>) {
               {isReplying ? "Cancel Reply" : "Reply"}
             </button>
 
-            {reviewData.userId === myUserId && (
+            {props.review.userId === myUserId && (
               <button
                 onClick={() => {
                   if (isReplying) {
@@ -234,7 +219,7 @@ export default function Review(props: Readonly<ReviewProps>) {
           {(isReplying || isEditing) && (
             <div className="mt-4">
               <WriteReview
-                review={isReplying === true ? null : reviewData}
+                review={isReplying === true ? null : props.review}
                 onSubmit={isReplying ? handleSubmitReply : handleEdit}
                 isSubmitting={isSubmitting}
                 isReply={props.depth !== 0 || (props.depth === 0 && !isEditing)}
@@ -242,9 +227,9 @@ export default function Review(props: Readonly<ReviewProps>) {
             </div>
           )}
 
-          {reviewData?.replies?.length > 0 && (
+          {props.review.replies?.length > 0 && (
             <div className="ml-4 mt-4">
-              {reviewData.replies.map((reply: ReviewInterface) => {
+              {props.review.replies.map((reply: ReviewInterface) => {
                 const userVote = reply.reviewVotes?.find(
                   (v) => v.userId === myUserId
                 );

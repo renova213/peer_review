@@ -3,18 +3,15 @@ import ReviewComponent from "./review";
 
 export default function ReviewsList({
   reviews,
-  loading,
   error,
   type,
   pageId,
 }: Readonly<{
   reviews: Review[];
-  loading: boolean;
   error: string | null;
   type: "COURSE" | "TRYOUT_SECTION" | "APP";
   pageId: string;
 }>) {
-  if (loading) return <div>Loading reviews...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (reviews.length === 0)
     return <div className="text-gray-400">No reviews yet</div>;
