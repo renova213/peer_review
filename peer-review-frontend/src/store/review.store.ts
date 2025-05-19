@@ -8,7 +8,7 @@ import type {
 } from "../interfaces/stores/review.store.interface";
 import type Review from "../interfaces/entities/review.interface";
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = "http://peer-review-api.renmei.site/api";
 
 export const useReviewStore = create<ReviewStore>((set) => ({
   reviews: [],

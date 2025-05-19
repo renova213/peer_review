@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import type CourseDetailStore from "../interfaces/stores/course.detail.store.interface";
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = "http://peer-review-api.renmei.site/api";
 
 export const useCourseDetailStore = create<CourseDetailStore>((set) => ({
   course: null,

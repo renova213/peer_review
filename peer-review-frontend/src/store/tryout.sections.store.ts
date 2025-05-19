@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import type TryoutSectionStore from "../interfaces/stores/tryout.section.store.interface";
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = "http://peer-review-api.renmei.site/api";
 
 export const useTryoutSectionsStore = create<TryoutSectionStore>((set) => ({
   tryoutSections: [],
