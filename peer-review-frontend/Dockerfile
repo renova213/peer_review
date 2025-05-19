@@ -1,4 +1,3 @@
-# Build step
 FROM node:22 AS builder
 
 WORKDIR /app
@@ -7,14 +6,10 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Serve step
 FROM nginx:alpine
 
-# Salin hasil build ke folder public nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 80
+EXPOSE 5173
 
-# Jalankan nginx
 CMD ["nginx", "-g", "daemon off;"]
