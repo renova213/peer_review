@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import PlaceholderCourseImage from "../assets/images/course_placeholder.jpg";
 
 interface CourseCardProps {
   route: string;
@@ -15,7 +16,7 @@ export default function CourseCard(props: Readonly<CourseCardProps>) {
       className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform"
     >
       <img
-        src={props.imageUrl ?? "src/assets/images/course_placeholder.jpg"}
+        src={props.imageUrl ?? PlaceholderCourseImage}
         alt={props.title}
         className="w-full h-48 object-cover"
       />
