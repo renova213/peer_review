@@ -7,11 +7,8 @@ import type {
   VoteReviewProps,
 } from "../interfaces/stores/review.store.interface";
 import type Review from "../interfaces/entities/review.interface";
-import dotenv from "dotenv";
 
-dotenv.config();
-
-const BASE_URL = process.env.BASE_URL ?? "localhost:3000/api";
+const BASE_URL = import.meta.env.VITE_BASE_URL ?? "localhost:3000/api";
 
 export const useReviewStore = create<ReviewStore>((set) => ({
   reviews: [],
