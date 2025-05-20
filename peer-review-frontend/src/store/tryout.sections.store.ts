@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const BASE_URL = process.env.BASE_URL ?? "localhost:3000/api";
+const BASE_URL = process.env.VITE_BASE_URL ?? "localhost:3000/api";
 
 export const useTryoutSectionsStore = create<TryoutSectionStore>((set) => ({
   tryoutSections: [],
