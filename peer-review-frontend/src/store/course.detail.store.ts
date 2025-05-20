@@ -1,8 +1,11 @@
 import { create } from "zustand";
 import axios from "axios";
 import type CourseDetailStore from "../interfaces/stores/course.detail.store.interface";
+import dotenv from "dotenv";
 
-const BASE_URL = "http://peer-review-api.renmei.site/api";
+dotenv.config();
+
+const BASE_URL = process.env.BASE_URL ?? "localhost:3000/api";
 
 export const useCourseDetailStore = create<CourseDetailStore>((set) => ({
   course: null,

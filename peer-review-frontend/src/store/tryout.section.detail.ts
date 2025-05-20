@@ -1,8 +1,11 @@
 import { create } from "zustand";
 import axios from "axios";
 import type TryoutSectionDetailStore from "../interfaces/stores/tryout.section.detail.store.interface";
+import dotenv from "dotenv";
 
-const BASE_URL = "http://peer-review-api.renmei.site/api";
+dotenv.config();
+
+const BASE_URL = process.env.BASE_URL ?? "localhost:3000/api";
 
 export const useTryoutSectionsStore = create<TryoutSectionDetailStore>(
   (set) => ({

@@ -7,8 +7,11 @@ import type {
   VoteReviewProps,
 } from "../interfaces/stores/review.store.interface";
 import type Review from "../interfaces/entities/review.interface";
+import dotenv from "dotenv";
 
-const BASE_URL = "http://peer-review-api.renmei.site/api";
+dotenv.config();
+
+const BASE_URL = process.env.BASE_URL ?? "localhost:3000/api";
 
 export const useReviewStore = create<ReviewStore>((set) => ({
   reviews: [],
