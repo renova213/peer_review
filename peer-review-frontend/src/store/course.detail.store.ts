@@ -1,11 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
 import type CourseDetailStore from "../interfaces/stores/course.detail.store.interface";
-import dotenv from "dotenv";
 
-dotenv.config();
-
-const BASE_URL = process.env.VITE_BASE_URL ?? "localhost:3000/api";
+const BASE_URL = import.meta.env.VITE_BASE_URL ?? "localhost:3000/api";
 
 export const useCourseDetailStore = create<CourseDetailStore>((set) => ({
   course: null,
